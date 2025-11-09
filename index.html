@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireGallery - Public Image Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+            --gray: #6c757d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c1121f;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0096c7;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--gray);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: var(--gray);
+        }
+
+        .upload-area.active {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .gallery-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #dee2e6;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .gallery-info {
+            padding: 15px;
+        }
+
+        .gallery-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gallery-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .gallery-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .gallery-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .action-btn.delete:hover {
+            color: var(--danger);
+        }
+
+        .action-btn.like:hover {
+            color: var(--accent);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-img {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .modal-info {
+            padding: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .auth-modal {
+            display: none;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .auth-form {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: var(--gray);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--dark);
+            color: white;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #495057;
+            color: #adb5bd;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <i class="fas fa-fire"></i>
+                    <span>FireGallery</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="active">Home</a>
+                    <a href="#">Gallery</a>
+                    <a href="#">Upload</a>
+                    <a href="#">About</a>
+                </div>
+                <div class="auth-section">
+                    <div id="user-info" class="user-info" style="display: none;">
+                        <img id="user-avatar" src="" alt="User Avatar" class="user-avatar">
+                        <span id="user-name"></span>
+                        <button id="sign-out-btn" class="btn btn-outline">Sign Out</button>
+                    </div>
+                    <div id="auth-buttons">
+                        <button id="sign-in-btn" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Share Your World Through Images</h1>
+            <p>Upload, organize, and share your photos with the world. All images are stored securely using Firebase with base64 encoding.</p>
+            <button id="get-started-btn" class="btn btn-primary">
+                <i class="fas fa-cloud-upload-alt"></i> Get Started
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Upload Section -->
+        <section class="upload-section" id="upload-section" style="display: none;">
+            <h2>Upload New Image</h2>
+            <div class="upload-area" id="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop your image here or click to browse</p>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+            </div>
+            <div class="form-group">
+                <label for="image-title">Title</label>
+                <input type="text" id="image-title" placeholder="Enter a title for your image">
+            </div>
+            <div class="form-group">
+                <label for="image-description">Description</label>
+                <input type="text" id="image-description" placeholder="Enter a description (optional)">
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="upload-progress"></div>
+            </div>
+            <button id="upload-btn" class="btn btn-primary" disabled>
+                <i class="fas fa-upload"></i> Upload Image
+            </button>
+        </section>
+
+        <!-- Gallery Filters -->
+        <div class="gallery-filters">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search images...">
+            </div>
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="recent">Recent</button>
+            <button class="filter-btn" data-filter="popular">Popular</button>
+            <button class="filter-btn" data-filter="mine" id="mine-filter" style="display: none;">My Images</button>
+        </div>
+
+        <!-- Gallery -->
+        <div class="gallery" id="gallery">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="image-modal">
+        <div class="modal-content">
+            <div class="modal-close" id="modal-close">
+                <i class="fas fa-times"></i>
+            </div>
+            <img class="modal-img" id="modal-img" src="" alt="Full size image">
+            <div class="modal-info">
+                <h3 id="modal-title"></h3>
+                <p id="modal-description"></p>
+                <div class="gallery-meta">
+                    <span id="modal-author"></span>
+                    <span id="modal-date"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal auth-modal" id="auth-modal">
+        <div class="modal-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="signin">Sign In</div>
+                <div class="auth-tab" data-tab="signup">Sign Up</div>
+            </div>
+            <div class="auth-form">
+                <div id="signin-form">
+                    <div class="form-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" placeholder="Enter your password">
+                    </div>
+                    <button id="signin-submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <div class="divider">
+                        <span>Or continue with</span>
+                    </div>
+                    <button id="google-signin" class="btn btn-outline" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                    <button id="anonymous-signin" class="btn btn-outline" style="width: 100%;">
+                        <i class="fas fa-user-secret"></i> Continue Anonymously
+                    </button>
+                </div>
+                <div id="signup-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create a password">
+                    </div>
+                    <button id="signup-submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle" id="toast-icon"></i>
+        <span id="toast-message">Operation completed successfully!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FireGallery</h3>
+                    <p>A modern image gallery built with Firebase and vanilla JavaScript. Upload and share your images with the world.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Gallery</a></li>
+                        <li><a href="#">Upload</a></li>
+                        <li><a href="#">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-discord"></i> Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 FireGallery. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-analytics.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            where, 
+            orderBy, 
+            limit,
+            doc,
+            deleteDoc,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider, 
+            signInAnonymously, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEwxDtlFoQE-p4ZaRfhrCoFKp4nIvuvzY",
+            authDomain: "firegallery-18893.firebaseapp.com",
+            projectId: "firegallery-18893",
+            storageBucket: "firegallery-18893.firebasestorage.app",
+            messagingSenderId: "205029408189",
+            appId: "1:205029408189:web:c5d69c47ac67bf161ee6d4",
+            measurementId: "G-14CB11NC8D"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // DOM Elements
+        const gallery = document.getElementById('gallery');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const imageTitle = document.getElementById('image-title');
+        const imageDescription = document.getElementById('image-description');
+        const uploadProgress = document.getElementById('upload-progress');
+        const uploadSection = document.getElementById('upload-section');
+        const authModal = document.getElementById('auth-modal');
+        const signInBtn = document.getElementById('sign-in-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const userInfo = document.getElementById('user-info');
+        const authButtons = document.getElementById('auth-buttons');
+        const userName = document.getElementById('user-name');
+        const userAvatar = document.getElementById('user-avatar');
+        const getStartedBtn = document.getElementById('get-started-btn');
+        const modalClose = document.getElementById('modal-close');
+        const imageModal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const modalAuthor = document.getElementById('modal-author');
+        const modalDate = document.getElementById('modal-date');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const toastIcon = document.getElementById('toast-icon');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const signinSubmit = document.getElementById('signin-submit');
+        const signupSubmit = document.getElementById('signup-submit');
+        const googleSignin = document.getElementById('google-signin');
+        const anonymousSignin = document.getElementById('anonymous-signin');
+        const mineFilter = document.getElementById('mine-filter');
+        const searchInput = document.getElementById('search-input');
+
+        // Global Variables
+        let currentUser = null;
+        let selectedFile = null;
+        let images = [];
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', initApp);
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        uploadBtn.addEventListener('click', uploadImage);
+        signInBtn.addEventListener('click', () => showAuthModal('signin'));
+        signOutBtn.addEventListener('click', handleSignOut);
+        getStartedBtn.addEventListener('click', () => {
+            if (currentUser) {
+                uploadSection.style.display = 'block';
+                uploadSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                showAuthModal('signin');
+            }
+        });
+        modalClose.addEventListener('click', () => imageModal.style.display = 'none');
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) imageModal.style.display = 'none';
+        });
+
+        // Auth Modal Tabs
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                authTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                if (tabName === 'signin') {
+                    signinForm.style.display = 'block';
+                    signupForm.style.display = 'none';
+                } else {
+                    signinForm.style.display = 'none';
+                    signupForm.style.display = 'block';
+                }
+            });
+        });
+
+        // Auth Form Submissions
+        signinSubmit.addEventListener('click', handleEmailSignIn);
+        signupSubmit.addEventListener('click', handleEmailSignUp);
+        googleSignin.addEventListener('click', handleGoogleSignIn);
+        anonymousSignin.addEventListener('click', handleAnonymousSignIn);
+
+        // Search Functionality
+        searchInput.addEventListener('input', filterImages);
+
+        // Initialize App
+        function initApp() {
+            // Set up auth state listener
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    updateUIForUser(user);
+                    loadImages();
+                } else {
+                    currentUser = null;
+                    updateUIForGuest();
+                    loadImages();
+                }
+            });
+
+            // Load initial images
+            loadImages();
+        }
+
+        // Handle File Selection
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            uploadArea.classList.add('active');
+            uploadArea.innerHTML = `
+                <i class="fas fa-file-image"></i>
+                <p>${file.name}</p>
+                <small>Click upload button to proceed</small>
+            `;
+            uploadBtn.disabled = false;
+        }
+
+        // Upload Image to Firestore
+        async function uploadImage() {
+            if (!selectedFile) {
+                showToast('Please select an image first', 'error');
+                return;
+            }
+            
+            const title = imageTitle.value.trim();
+            if (!title) {
+                showToast('Please enter a title for your image', 'error');
+                return;
+            }
+            
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            
+            try {
+                // Convert image to base64
+                const base64 = await fileToBase64(selectedFile);
+                
+                // Chunk the base64 string if needed
+                const chunks = chunkBase64(base64);
+                
+                // Prepare image data
+                const imageData = {
+                    title: title,
+                    description: imageDescription.value.trim(),
+                    author: currentUser.displayName || 'Anonymous',
+                    authorId: currentUser.uid,
+                    chunks: chunks,
+                    chunkCount: chunks.length,
+                    timestamp: serverTimestamp(),
+                    likes: 0,
+                    likedBy: []
+                };
+                
+                // Upload to Firestore
+                const docRef = await addDoc(collection(db, 'images'), imageData);
+                
+                showToast('Image uploaded successfully!', 'success');
+                
+                // Reset form
+                resetUploadForm();
+                
+                // Reload gallery
+                loadImages();
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                showToast('Failed to upload image. Please try again.', 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
+            }
+        }
+
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Chunk base64 string for Firestore
+        function chunkBase64(base64String, chunkSize = 900000) { // ~900KB chunks
+            const chunks = [];
+            for (let i = 0; i < base64String.length; i += chunkSize) {
+                chunks.push(base64String.substring(i, i + chunkSize));
+            }
+            return chunks;
+        }
+
+        // Load images from Firestore
+        async function loadImages() {
+            gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
+            try {
+                const q = query(collection(db, 'images'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                images = [];
+                querySnapshot.forEach((doc) => {
+                    images.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                renderGallery(images);
+            } catch (error) {
+                console.error('Error loading images:', error);
+                gallery.innerHTML = '<p>Error loading images. Please try again later.</p>';
+            }
+        }
+
+        // Render gallery with images
+        function renderGallery(imagesToRender) {
+            if (imagesToRender.length === 0) {
+                gallery.innerHTML = '<p>No images found. Be the first to upload one!</p>';
+                return;
+            }
+            
+            gallery.innerHTML = '';
+            
+            imagesToRender.forEach(image => {
+                // Reconstruct base64 from chunks
+                const base64 = image.chunks.join('');
+                
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${base64}" alt="${image.title}" class="gallery-img">
+                    <div class="gallery-info">
+                        <div class="gallery-title">${image.title}</div>
+                        <div class="gallery-description">${image.description || 'No description'}</div>
+                        <div class="gallery-meta">
+                            <span>by ${image.author}</span>
+                            <span>${formatDate(image.timestamp?.toDate())}</span>
+                        </div>
+                    </div>
+                    <div class="gallery-actions">
+                        <div class="action-btn like" data-id="${image.id}">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        ${currentUser && currentUser.uid === image.authorId ? `
+                            <div class="action-btn delete" data-id="${image.id}">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Add event listeners
+                const img = galleryItem.querySelector('.gallery-img');
+                img.addEventListener('click', () => openImageModal(image));
+                
+                const likeBtn = galleryItem.querySelector('.like');
+                likeBtn.addEventListener('click', () => handleLike(image.id));
+                
+                if (currentUser && currentUser.uid === image.authorId) {
+                    const deleteBtn = galleryItem.querySelector('.delete');
+                    deleteBtn.addEventListener('click', () => handleDelete(image.id));
+                }
+                
+                gallery.appendChild(galleryItem);
+            });
+        }
+
+        // Open image modal
+        function openImageModal(image) {
+            const base64 = image.chunks.join('');
+            modalImg.src = base64;
+            modalTitle.textContent = image.title;
+            modalDescription.textContent = image.description || 'No description';
+            modalAuthor.textContent = `by ${image.author}`;
+            modalDate.textContent = formatDate(image.timestamp?.toDate());
+            imageModal.style.display = 'flex';
+        }
+
+        // Handle like functionality
+        function handleLike(imageId) {
+            if (!currentUser) {
+                showToast('Please sign in to like images', 'error');
+                return;
+            }
+            
+            // This is a simplified implementation
+            // In a real app, you would update the Firestore document
+            showToast('Like functionality would be implemented here', 'success');
+        }
+
+        // Handle delete functionality
+        async function handleDelete(imageId) {
+            if (!currentUser) return;
+            
+            if (!confirm('Are you sure you want to delete this image?')) return;
+            
+            try {
+                await deleteDoc(doc(db, 'images', imageId));
+                showToast('Image deleted successfully', 'success');
+                loadImages();
+            } catch (error) {
+                console.error('Error deleting image:', error);
+                showToast('Failed to delete image', 'error');
+            }
+        }
+
+        // Filter images based on search
+        function filterImages() {
+            const searchTerm = searchInput.value.toLowerCase();
+            if (!searchTerm) {
+                renderGallery(images);
+                return;
+            }
+            
+            const filtered = images.filter(image => 
+                image.title.toLowerCase().includes(searchTerm) || 
+                image.description.toLowerCase().includes(searchTerm) ||
+                image.author.toLowerCase().includes(searchTerm)
+            );
+            
+            renderGallery(filtered);
+        }
+
+        // Authentication Handlers
+        function handleEmailSignIn() {
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+            
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    showToast('Signed in successfully!', 'success');
+                    authModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error signing in:', error);
+                    showToast('Failed to sign in. Please check your credentials.', 'error');
+                });
+        }
+
+        function handleEmailSignUp() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (!name || !email || !password) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    showToast('Account created successfully!', 'success');
+                    authModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error creating account:', error);
+                    showToast('Failed to create account. Please try again.', 'error');
+                });
+        }
+
+        function handleGoogleSignIn() {
+            const provider = new GoogleAuthProvider();
+            
+            signInWithPopup(auth, provider)
+                .then(() => {
+                    showToast('Signed in with Google successfully!', 'success');
+                    authModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error signing in with Google:', error);
+                    showToast('Failed to sign in with Google', 'error');
+                });
+        }
+
+        function handleAnonymousSignIn() {
+            signInAnonymously(auth)
+                .then(() => {
+                    showToast('Signed in anonymously!', 'success');
+                    authModal.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error signing in anonymously:', error);
+                    showToast('Failed to sign in anonymously', 'error');
+                });
+        }
+
+        function handleSignOut() {
+            signOut(auth)
+                .then(() => {
+                    showToast('Signed out successfully', 'success');
+                })
+                .catch(error => {
+                    console.error('Error signing out:', error);
+                    showToast('Failed to sign out', 'error');
+                });
+        }
+
+        // UI Update Functions
+        function updateUIForUser(user) {
+            authButtons.style.display = 'none';
+            userInfo.style.display = 'flex';
+            uploadSection.style.display = 'block';
+            mineFilter.style.display = 'block';
+            
+            userName.textContent = user.displayName || 'Anonymous User';
+            if (user.photoURL) {
+                userAvatar.src = user.photoURL;
+            } else {
+                userAvatar.src = 'https://via.placeholder.com/40?text=U';
+            }
+        }
+
+        function updateUIForGuest() {
+            authButtons.style.display = 'block';
+            userInfo.style.display = 'none';
+            uploadSection.style.display = 'none';
+            mineFilter.style.display = 'none';
+        }
+
+        function showAuthModal(tab) {
+            authModal.style.display = 'flex';
+            
+            if (tab === 'signup') {
+                authTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="signup"]').classList.add('active');
+                signinForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            } else {
+                authTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="signin"]').classList.add('active');
+                signinForm.style.display = 'block';
+                signupForm.style.display = 'none';
+            }
+        }
+
+        // Utility Functions
+        function resetUploadForm() {
+            selectedFile = null;
+            fileInput.value = '';
+            imageTitle.value = '';
+            imageDescription.value = '';
+            uploadProgress.style.width = '0%';
+            uploadArea.classList.remove('active');
+            uploadArea.innerHTML = `
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop your image here or click to browse</p>
+            `;
+        }
+
+        function formatDate(date) {
+            if (!date) return 'Unknown date';
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toast.className = 'toast';
+            
+            if (type === 'success') {
+                toast.classList.add('success');
+                toastIcon.className = 'fas fa-check-circle';
+            } else {
+                toast.classList.add('error');
+                toastIcon.className = 'fas fa-exclamation-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

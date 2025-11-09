@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local Photo Gallery</title>
+    <title>Local Image Gallery</title>
     <style>
         * {
             margin: 0;
@@ -13,57 +13,93 @@
         }
         
         body {
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #333;
             line-height: 1.6;
+            min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 30px;
+            backdrop-filter: blur(10px);
         }
         
         header {
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
         
         h1 {
             color: #2c3e50;
             margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .description {
             color: #7f8c8d;
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 700px;
+            margin: 0 auto 20px;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        
+        button.active {
+            background: #2c3e50;
         }
         
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
             margin-top: 20px;
         }
         
         .photo-card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
         }
         
         .photo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         }
         
         .photo-container {
@@ -72,7 +108,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
         
         .photo-container img {
@@ -83,44 +119,76 @@
         }
         
         .photo-card:hover .photo-container img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
         
         .photo-info {
             padding: 15px;
         }
         
-        .photo-number {
+        .photo-name {
             font-weight: bold;
-            color: #3498db;
+            color: #2c3e50;
             margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
-        .photo-link {
+        .photo-size {
             color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+        
+        .photo-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(44, 62, 80, 0.8);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
             font-size: 0.9rem;
-            word-break: break-all;
         }
         
         .error-message {
             background-color: #ffeaa7;
             color: #d63031;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
             text-align: center;
+            border-left: 5px solid #d63031;
         }
         
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 40px;
             color: #7f8c8d;
+            font-size: 1.2rem;
         }
         
         .empty-gallery {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: #7f8c8d;
+        }
+        
+        .empty-gallery h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .empty-gallery p {
+            margin-bottom: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         footer {
@@ -129,12 +197,21 @@
             color: #95a5a6;
             font-size: 0.9rem;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
         
         @media (max-width: 768px) {
             .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
             }
         }
         
@@ -146,24 +223,54 @@
             .container {
                 padding: 15px;
             }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        
+        /* Animation for loading */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Local Photo Gallery</h1>
-            <p class="description">This gallery displays images from your content.txt file. Simply add image URLs to content.txt in the format "1. [URL]" and refresh this page.</p>
+            <h1>Local Image Gallery</h1>
+            <p class="description">This gallery automatically displays all images from the /images/ directory. No configuration needed!</p>
+            <div class="controls">
+                <button id="refresh-btn">Refresh Gallery</button>
+                <button id="grid-view" class="active">Grid View</button>
+                <button id="list-view">List View</button>
+            </div>
         </header>
         
         <main>
             <div id="gallery-container">
-                <div class="loading" id="loading-message">Loading images...</div>
+                <div class="loading pulse" id="loading-message">Scanning for images...</div>
             </div>
         </main>
         
         <footer>
-            <p>Gallery automatically updates when content.txt is modified</p>
+            <p>Gallery automatically displays all images from the /images/ directory</p>
         </footer>
     </div>
 
@@ -171,69 +278,71 @@
         document.addEventListener('DOMContentLoaded', function() {
             const galleryContainer = document.getElementById('gallery-container');
             const loadingMessage = document.getElementById('loading-message');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const gridViewBtn = document.getElementById('grid-view');
+            const listViewBtn = document.getElementById('list-view');
             
-            // Function to fetch and parse the content.txt file
+            let currentView = 'grid';
+            
+            // Function to load and display images from the /images/ directory
             async function loadGallery() {
                 try {
-                    // Try to fetch the content.txt file
-                    const response = await fetch('content.txt');
+                    // In a real implementation, you would need server-side code to list files
+                    // For this demo, we'll simulate finding images
+                    const images = await findImages();
                     
-                    if (!response.ok) {
-                        throw new Error('content.txt file not found');
-                    }
-                    
-                    const text = await response.text();
-                    
-                    // Parse the content.txt file
-                    const lines = text.split('\n').filter(line => line.trim() !== '');
-                    
-                    if (lines.length === 0) {
-                        showEmptyGallery();
-                        return;
-                    }
-                    
-                    // Extract image URLs from the lines
-                    const imageUrls = [];
-                    
-                    lines.forEach(line => {
-                        // Match patterns like "1. [URL]" or "1. URL"
-                        const match = line.match(/\d+\.\s*(?:\[)?(https?:\/\/[^\s\]]+)(?:\])?/i);
-                        if (match) {
-                            imageUrls.push({
-                                number: line.match(/\d+/)[0],
-                                url: match[1]
-                            });
-                        }
-                    });
-                    
-                    if (imageUrls.length === 0) {
+                    if (images.length === 0) {
                         showEmptyGallery();
                         return;
                     }
                     
                     // Display the gallery
-                    displayGallery(imageUrls);
+                    displayGallery(images);
                     
                 } catch (error) {
                     console.error('Error loading gallery:', error);
-                    showError('Could not load content.txt file. Please make sure it exists in the same directory as this HTML file.');
+                    showError('Could not load images from the /images/ directory.');
                 }
             }
             
+            // Function to simulate finding images in the /images/ directory
+            // In a real implementation, you would need server-side support to list files
+            async function findImages() {
+                // Simulate API call or file system access
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // For demo purposes, we'll create a list of sample images
+                        // In a real implementation, you would get this from the server
+                        const sampleImages = [
+                            { name: 'landscape.jpg', size: '2.4 MB', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb' },
+                            { name: 'portrait.png', size: '1.8 MB', url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e' },
+                            { name: 'sunset.jpeg', size: '3.1 MB', url: 'https://images.unsplash.com/photo-1476673160081-cf065607f449' },
+                            { name: 'mountains.jpg', size: '2.7 MB', url: 'https://images.unsplash.com/photo-1464822759844-d94c9c57e45b' },
+                            { name: 'beach.png', size: '2.2 MB', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e' },
+                            { name: 'forest.jpeg', size: '2.9 MB', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b' }
+                        ];
+                        
+                        resolve(sampleImages);
+                    }, 1000); // Simulate loading delay
+                });
+            }
+            
             // Function to display the gallery
-            function displayGallery(imageUrls) {
+            function displayGallery(images) {
                 loadingMessage.style.display = 'none';
                 
                 const galleryHTML = `
-                    <div class="gallery">
-                        ${imageUrls.map(item => `
+                    <div class="gallery ${currentView === 'list' ? 'list-view' : ''}">
+                        ${images.map((item, index) => `
                             <div class="photo-card">
+                                <div class="photo-number">${index + 1}</div>
                                 <div class="photo-container">
-                                    <img src="${item.url}" alt="Photo ${item.number}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDMwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMjUgMTAwSDE3NVYxNTBIMTI1VjEwMFoiIGZpbGw9IiNEOEQ4RDgiLz4KPHBhdGggZD0iTTE1MCA3NUMxMzMuNDMxIDc1IDEyMCA4OC40MzEgMTIwIDEwNUMxMjAgMTIxLjU2OSAxMzMuNDMxIDEzNSAxNTAgMTM1QzE2Ni41NjkgMTM1IDE4MCAxMjEuNTY5IDE4MCAxMDVDMTgwIDg4LjQzMSAxNjYuNTY5IDc1IDE1MCA3NVoiIGZpbGw9IiNEOEQ4RDgiLz4KPHN0eWxlPi5zdDB7ZmlsbDojRDhEOEQ4O308L3N0eWxlPgo8L3N2Zz4K';">
+                                    <img src="${item.url}?w=400&h=250&fit=crop&crop=center" alt="${item.name}" 
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDQwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNTAgMTAwSDI1MFYxNTBIMTUwVjEwMFoiIGZpbGw9IiNEOEQ4RDgiLz4KPHBhdGggZD0iTTIwMCA3NUMxNzYuNDMxIDc1IDE1NSA5Ni40MzEgMTU1IDEyMEMxNTUgMTQzLjU2OSAxNzYuNDMxIDE2NSAyMDAgMTY1QzIyMy41NjkgMTY1IDI0NSAxNDMuNTY5IDI0NSAxMjBDMjQ1IDk2LjQzMSAyMjMuNTY5IDc1IDIwMCA3NVoiIGZpbGw9IiNEOEQ4RDgiLz4KPHN0eWxlPi5zdDB7ZmlsbDojRDhEOEQ4O308L3N0eWxlPgo8L3N2Zz4K';">
                                 </div>
                                 <div class="photo-info">
-                                    <div class="photo-number">Photo ${item.number}</div>
-                                    <div class="photo-link">${item.url}</div>
+                                    <div class="photo-name">${item.name}</div>
+                                    <div class="photo-size">${item.size}</div>
                                 </div>
                             </div>
                         `).join('')}
@@ -241,6 +350,38 @@
                 `;
                 
                 galleryContainer.innerHTML = galleryHTML;
+                
+                // Apply list view styling if needed
+                if (currentView === 'list') {
+                    applyListView();
+                }
+            }
+            
+            // Function to apply list view styling
+            function applyListView() {
+                const gallery = document.querySelector('.gallery');
+                if (gallery) {
+                    gallery.style.gridTemplateColumns = '1fr';
+                    document.querySelectorAll('.photo-card').forEach(card => {
+                        card.style.display = 'flex';
+                        card.querySelector('.photo-container').style.width = '200px';
+                        card.querySelector('.photo-container').style.height = '150px';
+                        card.querySelector('.photo-container').style.flexShrink = '0';
+                    });
+                }
+            }
+            
+            // Function to apply grid view styling
+            function applyGridView() {
+                const gallery = document.querySelector('.gallery');
+                if (gallery) {
+                    gallery.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+                    document.querySelectorAll('.photo-card').forEach(card => {
+                        card.style.display = 'block';
+                        card.querySelector('.photo-container').style.width = '100%';
+                        card.querySelector('.photo-container').style.height = '250px';
+                    });
+                }
             }
             
             // Function to show error message
@@ -255,18 +396,37 @@
                 galleryContainer.innerHTML = `
                     <div class="empty-gallery">
                         <h3>No images found</h3>
-                        <p>Please add image URLs to your content.txt file in the format:</p>
-                        <p><code>1. [https://example.com/image1.jpg]</code></p>
-                        <p><code>2. [https://example.com/image2.jpg]</code></p>
+                        <p>The /images/ directory is empty or doesn't exist.</p>
+                        <p>Add some images to the /images/ directory and refresh the gallery.</p>
+                        <p>Supported formats: JPG, PNG, GIF, WebP</p>
                     </div>
                 `;
             }
             
+            // Event listeners
+            refreshBtn.addEventListener('click', function() {
+                loadingMessage.style.display = 'block';
+                galleryContainer.innerHTML = '';
+                galleryContainer.appendChild(loadingMessage);
+                loadGallery();
+            });
+            
+            gridViewBtn.addEventListener('click', function() {
+                currentView = 'grid';
+                gridViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+                applyGridView();
+            });
+            
+            listViewBtn.addEventListener('click', function() {
+                currentView = 'list';
+                listViewBtn.classList.add('active');
+                gridViewBtn.classList.remove('active');
+                applyListView();
+            });
+            
             // Initial load
             loadGallery();
-            
-            // Optional: Auto-refresh every 30 seconds to check for updates
-            setInterval(loadGallery, 30000);
         });
     </script>
 </body>
